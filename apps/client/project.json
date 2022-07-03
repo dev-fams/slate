@@ -1,0 +1,66 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/client",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "root": "apps/client",
+        "outputPath": "dist/apps/client"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "client:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "client:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "client:build:production",
+          "dev": false
+        }
+      }
+    },
+    "serveBoth": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command":"env-cmd -f apps/server/.env.dev nx run server:serve"
+          },
+          {
+            "command":"env-cmd -f apps/client/.env.dev nx run client:serve"
+          }
+        ],
+        "parallel": true
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "client:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/client/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  },
+  "tags": []
+}
